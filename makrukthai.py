@@ -1,7 +1,7 @@
 from tkinter import *
 from pprint import pprint
 BOARD = Tk()
-BOARD.geometry('600x600+200+0')
+BOARD.geometry('650x650+200+0')
 BOARD.title('Makrukthai by Uncle Games')
 MAIN = Frame(BOARD)
 MAIN.pack(pady=20)
