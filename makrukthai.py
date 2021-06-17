@@ -97,7 +97,7 @@ chess_pic = {'ruer-1':'ruer-1.png',
 top_name = ['ruer-1','ma-1','khon-1','med-1','khun-1','khon-1','ma-1','ruer-1']
 top_name2 = ['bia1-1','bia1-1','bia1-1','bia1-1','bia1-1','bia1-1','bia1-1','bia1-1']
 bottom_name2 = ['bia1-2','bia1-2','bia1-2','bia1-2','bia1-2','bia1-2','bia1-2','bia1-2']
-bottom_name = ['ruer-2','ma-2','khon-2','med-2','khun-2','khon-2','ma-2','ruer-2']
+bottom_name = ['ruer-2','ma-2','khon-2','khun-2','med-2','khon-2','ma-2','ruer-2']
 
 # สร้างแถวหมาก (ดำ)
 for c,n in zip(allcode[0],top_name):
