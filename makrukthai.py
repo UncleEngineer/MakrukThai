@@ -99,10 +99,13 @@ chess_pic = {'ruer-1':'ruer-1.png',
 			 'bia2-1':'bia2-1.png',
 			 'bia2-2':'bia2-2.png'}
 
-class Ruer:
-	def __init__(self):
-		self.location = 'A_1'
+class Chess:
+	def __init__(self,location,name):
+
+		self.location = location # A_1
+		self.name = name
 		self.column = ''
+		self.row = None
 		self.char()
 
 	def valid_location(push_loc,tables):
@@ -110,9 +113,12 @@ class Ruer:
 
 	def char(self):
 		self.column = self.location.split('_')[0]
+		self.row = self.location.split('_')[1]
 
-x = Ruer()
-print(x.location, x.column)
+
+
+
+
 
 top_name = ['ruer-1','ma-1','khon-1','med-1','khun-1','khon-1','ma-1','ruer-1']
 top_name2 = ['bia1-1','bia1-1','bia1-1','bia1-1','bia1-1','bia1-1','bia1-1','bia1-1']
