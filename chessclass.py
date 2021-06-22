@@ -1,4 +1,5 @@
 # chessclass.py
+from pprint import pprint
 
 class Mak:
 	def __init__(self,location,BOARD):
@@ -10,7 +11,7 @@ class Mak:
 		self.char()
 		self.columns_key = {'A':0,'B':1,'C':2,'D':3,'E':4,'F':5,'G':6,'H':7}
 		self.columns_key2 = {0:'A',1:'B',2:'C',3:'D',4:'E',5:'F',6:'G',7:'H'}
-		self.tables = []
+		
 
 	def char(self):
 		self.column = self.location.split('_')[0]
@@ -23,22 +24,28 @@ class Mak:
 class Makruk(Mak):
 	
 	def __init__(self,location,BOARD,TEAM):
-		ruerlist = []
-		ruerlist.extend([(0,i) for i in range(1,8)])
-		ruerlist.extend([(0,-i) for i in range(1,8)])
-		ruerlist.extend([(i,0) for i in range(1,8)])
-		ruerlist.extend([(-i,0) for i in range(1,8)])
+		RUER = []
+		RUER.extend([(0,i) for i in range(1,8)])
+		RUER.extend([(0,-i) for i in range(1,8)])
+		RUER.extend([(i,0) for i in range(1,8)])
+		RUER.extend([(-i,0) for i in range(1,8)])
 		self.team = TEAM
-		self.makruk_validmove = {'ruer':ruerlist,
+		if self.team == 'A':
+			KHON = [(0,1),(1,1),(-1,1),(1,-1),(-1,-1)]
+			BIA = [(0,1)]
+		else:
+			KHON = [(0,-1),(1,1),(-1,1),(1,-1),(-1,-1)]
+			BIA = [(0,-1)]
+
+		self.makruk_validmove = {'ruer':RUER,
 								 'ma':[(1,2),(2,1),(2,-1),(1,-2),(-1,-2),(-2,-1),(-2,1),(-1,2)],
-								 'khon':[(0,1),(1,1),(-1,1),(1,-1),(-1,-1)],
+								 'khon':KHON, # *
 								 'med':[(1,1),(-1,1),(1,-1),(-1,-1)],
 								 'khun':[(0,1),(0,-1),(1,0),(-1,0),(1,1),(-1,1),(1,-1),(-1,-1)],
-								 'bia1':[(0,1)],
+								 'bia1':BIA, # *
 								 'bia2':[(1,1),(-1,1),(1,-1),(-1,-1)]}
 		super().__init__(location,BOARD)
 		self.bia = False
-		print('NAME:',self.name)
 		self.move_valid = self.makruk_validmove[self.name.split('-')[0]]
 		self.bia_capture_valid = [(-1,1),(1,1)]
 		self.currentindex = ()
@@ -177,14 +184,15 @@ class Board:
 				self.Mak[code] = '-'
 
 	def move(self,loc_from,loc_to):
-		if self.Mak[loc_from].check_move(loc_to):
-			self.Mak[loc_to] = self.Mak[loc_from]
-			self.Mak[loc_to].location = loc_to
-			self.Mak[loc_to].char() # update location 
-			#BOARD.update_newtable(False)
-			#self.Mak[loc_to] = Makruk(loc_to,self,self.Mak[loc_to].team)
-			self.Mak[loc_from] = '-'
-			BOARD.update_newtable()
+		if self.Mak[loc_from] != '-':
+			if self.Mak[loc_from].check_move(loc_to):
+				self.Mak[loc_to] = self.Mak[loc_from]
+				self.Mak[loc_to].location = loc_to
+				self.Mak[loc_to].char() # update location 
+				#BOARD.update_newtable(False)
+				#self.Mak[loc_to] = Makruk(loc_to,self,self.Mak[loc_to].team)
+				self.Mak[loc_from] = '-'
+				BOARD.update_newtable()
 			
 
 		
@@ -224,8 +232,10 @@ class Board:
 if __name__ == '__main__':
 	BOARD = Board()
 	BOARD.showtable()
-	
-	#BOARD.move('A_3','A_6')
+	#print('-----------')
+	#BOARD.move('B_1','D_2')
+	#pprint(BOARD.Mak['D_2'].__dict__)
+	#print('-----------')
 	
 
 	for i in range(10):
