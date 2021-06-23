@@ -249,14 +249,9 @@ if __name__ == '__main__':
 
 	BOARD = Board([p1,p2])
 	BOARD.showtable()
-	#print('-----------')
-	#BOARD.move('B_1','D_2')
-	#pprint(BOARD.Mak['D_1'].__dict__)
-	#print('-----------')
 	
-
 	for i in range(1000):
-		loc_from = input("Enter ['A_3'] Makruk Location from: ")
-		loc_to = input("Enter ['A_4'] Makruk Location from: ")
+		loc_from = input("Enter Location (Example: 'A_3') Makruk Location from: ")
+		loc_to = input("Enter Location (Example: 'A_4') Makruk Location to: ")
 		BOARD.move(loc_from,loc_to)
 		print('----------------')
