@@ -18,9 +18,6 @@ class Mak:
 		self.row = int(self.location.split('_')[1])
 
 
-
-
-
 class Makruk(Mak):
 	
 	def __init__(self,location,BOARD,TEAM):
@@ -30,7 +27,7 @@ class Makruk(Mak):
 		RUER.extend([(i,0) for i in range(1,8)])
 		RUER.extend([(-i,0) for i in range(1,8)])
 		self.team = TEAM
-		if self.team == 'A':
+		if self.team == BOARD.players[0]:
 			KHON = [(0,1),(1,1),(-1,1),(1,-1),(-1,-1)]
 			BIA = [(0,1)]
 		else:
@@ -60,7 +57,7 @@ class Makruk(Mak):
 		valid_checklist = []
 		for mvx,mvy in self.move_valid:
 			valid_move.append((mvx+px,8-(py+mvy)))
-		#print('MOVE LIST',valid_move) # 0,4
+		
 		print('----{}-----can move to--------'.format(self.location))
 		for vm in valid_move:
 			try:
@@ -71,10 +68,6 @@ class Makruk(Mak):
 			except:
 				pass
 
-		# for m in self.board.Mak.items():
-		# 	print(m[0],m[1])
-		# 	if m[1] != '-':
-		# 		print(m[1].team)
 
 		valid_canmove = []
 		for v in valid_checklist:
@@ -100,10 +93,18 @@ class Makruk(Mak):
 	def __str__(self):
 		return self.name
 
+class Player:
+	def __init__(self,username='A'):
+		self.username = username
+
 
 class Board:
-	def __init__(self):
+	default_players = [Player('A'),Player('B')]
+	def __init__(self,players=default_players):
 		self.Mak = {}
+		self.players = players
+		self.current_team = players[0].username
+		self.allteam = {'A':'B','B':'A'}
 		self.columns = ['A','B','C','D','E','F','G','H']
 		self.location = {}
 		self.table = [['ruer-2', 'ma-2', 'khon-2', 'khun-2', 'med-2', 'khon-2', 'ma-2', 'ruer-2'],
@@ -175,24 +176,34 @@ class Board:
 				mak_name = mak.split('-')[0]
 				team = mak.split('-')[1]
 				if team == '1':
-					team = 'A'
+					team = self.players[0]
 				else:
-					team = 'B'
+					team = self.players[1]
 				newmak = Makruk(code,self,team)
 				self.Mak[code] = newmak
 			else:
 				self.Mak[code] = '-'
 
 	def move(self,loc_from,loc_to):
+		
 		if self.Mak[loc_from] != '-':
-			if self.Mak[loc_from].check_move(loc_to):
-				self.Mak[loc_to] = self.Mak[loc_from]
-				self.Mak[loc_to].location = loc_to
-				self.Mak[loc_to].char() # update location 
-				#BOARD.update_newtable(False)
-				#self.Mak[loc_to] = Makruk(loc_to,self,self.Mak[loc_to].team)
-				self.Mak[loc_from] = '-'
-				BOARD.update_newtable()
+			if self.Mak[loc_from].team.username == self.current_team:
+				if self.Mak[loc_from].check_move(loc_to):
+					self.Mak[loc_to] = self.Mak[loc_from]
+					self.Mak[loc_to].location = loc_to
+					self.Mak[loc_to].char() # update location 
+					
+					self.Mak[loc_from] = '-'
+					BOARD.update_newtable()
+					if self.current_team == self.players[0].username:
+						self.current_team = self.players[1].username
+					else:
+						self.current_team = self.players[0].username
+
+			else:
+				print('this is a turn of {}'.format(self.current_team))
+		else:
+			print("Can't select blank")
 			
 
 		
@@ -225,67 +236,27 @@ class Board:
 			print(r)
 		print()
 
+# ISSUES
 
-
-
+# หมากตัวเองกินตัวเองได้
+# เบี้ยยังไม่สามารถกินได้
+# เบี้ยกินแนวตรงเหมือนเดินได้
 
 if __name__ == '__main__':
-	BOARD = Board()
+
+	p1 = Player('robert')
+	p2 = Player('john')
+
+	BOARD = Board([p1,p2])
 	BOARD.showtable()
 	#print('-----------')
 	#BOARD.move('B_1','D_2')
-	#pprint(BOARD.Mak['D_2'].__dict__)
+	#pprint(BOARD.Mak['D_1'].__dict__)
 	#print('-----------')
 	
 
-	for i in range(10):
+	for i in range(1000):
 		loc_from = input("Enter ['A_3'] Makruk Location from: ")
 		loc_to = input("Enter ['A_4'] Makruk Location from: ")
 		BOARD.move(loc_from,loc_to)
 		print('----------------')
-
-
-
-
-
-
-
-
-
-
-
-'''
-x x x x x x x x
-x x x x x x x x
-x x x x x x x x
-x x x x x x x x
-x x x x x x x x
-x x x x x x x x
-x x x x x x x x
-x x x x x x x x
-
-ma
-x x x x x x x x
-x x x x x x x x
-x x o x o x x x
-x o x x x o x x
-x x x M x x x x
-x o x x x o x x
-x x o x o x x x
-x x x x x x x x
-
-[(1,2),(2,1),(2,-1),(1,-2),(-1,-2),(-2,-1),(-2,1),(-1,2)]
-
-'''
-
-
-
-
-
-
-
-
-#print(BOARD.table)
-
-# bia = Makruk('B_3',BOARD)
-# check = bia.check_move('C_4')
