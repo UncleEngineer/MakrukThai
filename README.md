@@ -15,4 +15,19 @@ First Upload - เล่นได้ กินได้ เบี้ยยัง
 
 Source Code: https://github.com/UncleEngineer/MakrukThai
 
+-----------CHESS CLASS for Makrukthai in CLI--------------
+python chessclass.py
+----------------------------------------------------------
+p1 = Player('robert')
+p2 = Player('john')
+
+BOARD = Board([p1,p2])
+BOARD.showtable()
+
+for i in range(1000):
+  loc_from = input("Enter Location (Example: 'A_3') Makruk Location from: ")
+  loc_to = input("Enter Location (Example: 'A_4') Makruk Location to: ")
+  BOARD.move(loc_from,loc_to)
+  print('----------------')
+
 ปล. ลุงเขียนโปรแกรมเองเวอร์ชั่นนี้ใช้เวลาตั้งแต่ต้นประมาณ 3 ชั่วโมง ยังไม่เขียนแบบ oop + วาดรูปเอง 555 ไม่มีลิขสิทธิ์ เอาไปใช้ได้เต็มที่ (ใครจะเอาไปใช้ ๕๕๕)
