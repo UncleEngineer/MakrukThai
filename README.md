@@ -16,8 +16,10 @@ First Upload - เล่นได้ กินได้ เบี้ยยัง
 Source Code: https://github.com/UncleEngineer/MakrukThai
 
 -----------CHESS CLASS for Makrukthai in CLI--------------
+```sh
 python chessclass.py
-----------------------------------------------------------
+```
+
 ```python
 p1 = Player('robert')
 p2 = Player('john')
