@@ -3,17 +3,18 @@ from pprint import pprint
 
 class Mak:
 	def __init__(self,location,BOARD):
-		self.board = BOARD
-		self.location = location # A_1
-		self.name = self.board.location[location]
-		self.column = None
-		self.row = None
-		self.char()
+		self.board = BOARD # กำลังเล่นบนกระดานไหน
+		self.location = location # ตำแหน่งปัจจุบัน
+		self.name = self.board.location[location] # ค้นหาชื่อจากตำแหน่งในกระดาน เช่น ตำแหน่ง A_1 คือชื่อตัวหมากตัวใดเช่น reur-1
+		self.column = None #ชื่อ column นับจาก A-H ซ้ายไปขวา
+		self.row = None #ชื่อแถวเป็นตัวเลข เริ่มจาก 1-8 ล่างขึ้นบน
+		self.char() #ฟังชั่นสำหรับอัพเดต column และ row จาก location ที่ส่งมา
 		self.columns_key = {'A':0,'B':1,'C':2,'D':3,'E':4,'F':5,'G':6,'H':7}
 		self.columns_key2 = {0:'A',1:'B',2:'C',3:'D',4:'E',5:'F',6:'G',7:'H'}
 		
 
 	def char(self):
+		# แปลงจาก location เช่น 'A_1' เป็น ['A',1] = row, column
 		self.column = self.location.split('_')[0]
 		self.row = int(self.location.split('_')[1])
 
@@ -21,11 +22,12 @@ class Mak:
 class Makruk(Mak):
 	
 	def __init__(self,location,BOARD,TEAM):
-		RUER = []
+		RUER = [] #ลิสต์ไว้เก็บตำแหน่งที่เรือสามารถเดินได้
 		RUER.extend([(0,i) for i in range(1,8)])
 		RUER.extend([(0,-i) for i in range(1,8)])
 		RUER.extend([(i,0) for i in range(1,8)])
 		RUER.extend([(-i,0) for i in range(1,8)])
+
 		self.team = TEAM
 		if self.team == BOARD.players[0]:
 			KHON = [(0,1),(1,1),(-1,1),(1,-1),(-1,-1)]
@@ -123,48 +125,64 @@ class Board:
 		location = {}
 
 		for i,row in enumerate(self.table,start=1):
-			rw = []
+			# นำชื่อหมากใน tableล่าสุด มาสร้าง dict สำหรับเก็บหมาก
+			rw = [] # เก็บแถวหนึ่งแถว
+			# นำชื่อทั้ง 8 ช่องในแนว column มารันลูป
 			for j,col in enumerate(self.columns):
-				loc_code = '{}_{}'.format(col,9-i)
-				rw.append(loc_code)
-				location[loc_code] = row[j]
+				# สร้างรหัส code เช่น A_1 , A มาจาก columns แนวนอน A-H
+				# i คือแถวแนวตั้งเริ่มนับจาก 1 โดยครั้งแรกต้องนำ 9 มาลบ 1 เพื่อให้ได้ 8 
+				# ซึ่ง list จะมีการเรียงลำดับจากบนลงด้านล่าง แต่หมากรุกนับแถวจาก 1 
+				# เป็นแถวด้านล่างสุดดังนั้นตัวนำตัวเลข 8 ไปไว้ลิสต์แรกซึ่งก็คือแถวสุดท้าย
+				# หากนับ 1 จากด้านล่างกระดาน
+				loc_code = '{}_{}'.format(col,9-i) 
+				rw.append(loc_code) # ลิสต์แรกจะได้เป็น ['A_8','B_8','C_8',...'H_8']
+				location[loc_code] = row[j] #จุดนี้กำลังสร้าง dict เช่น location['A_8'] = 'ruer-2'
 			#print(rw)
-		self.location = location
+		self.location = location #เก็บรหัสตำแหน่งไว้ว่า ตำแหน่งจุด A_8 มีเรืออยู่
+
+		# อัพเดตตำแหน่งข้อมูลจาก location ไปยัง table แถวละ 8 หมาก
 		allrow = []
 		row = []
 		count = 0
-		for i,l in enumerate(location.values(),start=0):
-			row.append(l)
+		for i,l in enumerate(self.location.values(),start=0):
+			row.append(l) # l = 'ruer-2' ใส่ไปใน row เพื่อสร้างลิสต์ ['ruer-2', 'ma-2', 'khon-2',.... ]
 			if count == 7:
+				# นับจนถึง index 7 (เนื่องจากนับ 0 ก่อนเมื่อถึง 7 หมายความว่าครบ 8 ตัวแล้ว)
 				#print('ROW ADD:',row)
-				allrow.append(row)
-				row = []
-				count = 0
+				allrow.append(row) # เมื่อครบ 8 ตัวแล้วจึงนำไปเก็บในลิสต์ใหญ่
+				row = [] # reset row ใหม่
+				count = 0 #นับใหม่จาก 0-7
 			else:
-				count += 1
-		self.table = allrow
+				count += 1 #หากนับไปยังไม่ถึง 7 จะเพิ่มครั้ง 1
+		self.table = allrow # เมื่อนับครบทั้งหมดแล้วจะอัพเดต table ของคลาสใหม่เป็นตัวล่าสุดซึ่งเป็นข้อมูลเดียวกับ location
 		#print(self.location)
 
 	def update_newtable(self,show=True):
-		
+		# ฟังชั่นนี้จะอัพเดตข้อมูลล่าสุดจากตัว Mak ซึ่งเป็น dict ที่เก็บตัวหมากทั้งหมดในกระดาน
 		allrow = []
 		row = []
 		count = 0
 		for i,l in enumerate(self.Mak.values(),start=0):
+			
 			if l != '-':
+				# หากค่าที่อยู่ใน Mak ไม่เป็น '-' ซึ่งเป็นช่องว่าง blank จะเพิ่มชื่อหมากลงไปใน row
 				row.append(l.name)
 			else:
+				# หาก Mak == '-' จะเพิ่ม '-' ในช่องนั้นซึ่งก็คือช่องว่าง
 				row.append('-')
 
 			if count == 7:
+				# หากนับถึงเลข 7 แล้วหมายความว่าในเพิ่มหมากจนครบ 8 ต่อแถวแล้ว
+				# จึงทำการเพิ่ม row ใน allrow ซึ่งใช้เก็บลิสต์กระดานทั้งหมด
 				#print('ROW ADD:',row)
 				allrow.append(row)
-				row = []
-				count = 0
+				row = [] # รีเซ็ตแถวใหม่
+				count = 0 # นับ 0 ใหม่เพื่อเริ่มสร้างแถวใหม่
 			else:
-				count += 1
-		self.table = allrow
+				count += 1 # หากยังนับไม่ครบก็เพิ่มค่า count อีก 1
+		self.table = allrow # ทำให้ table ของบอร์ดปัจจุบันเป็นค่าที่ update ล่าสุด
 		if show == True:
+			# หากต้องการโชว์ตารางล่าสุดก็เรียกฟังชั่นสำหรับโชว์ตาราง
 			self.showtable()
 			#print(self.location)
 
